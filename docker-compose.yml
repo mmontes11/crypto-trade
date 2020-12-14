@@ -1,0 +1,12 @@
+version: "3.3"
+
+services:
+  api:
+    image: mmontes11/crypto-trade-api
+    depends_on:
+      - clickhouse
+    environment: 
+      - API_SERVICE_PORT=10000
+      - ENV=production
+    ports:
+      - "10000:10000"
