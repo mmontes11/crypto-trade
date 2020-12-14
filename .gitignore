@@ -16,8 +16,8 @@ pids
 bin/
 
 # Coverage
-*.out
-coverage
+cover.out
+cover.html
 
 # Dependency directories
 vendor/
