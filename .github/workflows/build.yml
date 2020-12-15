@@ -15,9 +15,19 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Build Publisher
+        working-directory: ./cmd/publisher
+        run: make build
+
       - name: Build API
         working-directory: ./cmd/api
         run: make build
+
+      - name: Bin Publisher
+        uses: actions/upload-artifact@v2
+        with:
+          name: publisher
+          path: ./cmd/publisher/bin/publisher
 
       - name: Bin API
         uses: actions/upload-artifact@v2
