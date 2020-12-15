@@ -32,8 +32,8 @@ clean-test: ### Clean test cache
 	go clean -testcache ./...
 test: lint ### Run tests
 	go test -v ./... -coverprofile=cover.out
-cover: test ### Run tests and show coverage
-	go tool cover -html=cover.out
+cover: test ### Run tests and generate coverage
+	go tool cover -html=cover.out -o=cover.html
 mocks: ### Generates mocks for interfaces
 	mockery --all --keeptree
 bench: ### Run tests and benchmarks
