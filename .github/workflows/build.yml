@@ -19,6 +19,10 @@ jobs:
         working-directory: ./cmd/publisher
         run: make build
 
+      - name: Build Subscriber
+        working-directory: ./cmd/subscriber
+        run: make build
+
       - name: Build API
         working-directory: ./cmd/api
         run: make build
@@ -28,6 +32,12 @@ jobs:
         with:
           name: publisher
           path: ./cmd/publisher/bin/publisher
+
+      - name: Bin Subscriber
+        uses: actions/upload-artifact@v2
+        with:
+          name: subscriber
+          path: ./cmd/subscriber/bin/subscriber
 
       - name: Bin API
         uses: actions/upload-artifact@v2
