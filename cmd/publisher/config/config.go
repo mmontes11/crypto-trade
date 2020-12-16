@@ -14,4 +14,6 @@ var (
 	NatsURL = config.GetEnv("NATS_URL", nats.DefaultURL)
 	// PublishInterval is the interval between publications
 	PublishInterval = time.Duration(config.GetIntEnv("PUBLISH_INTERVAL_MS", 500)) * time.Millisecond
+	// NumPublishers is the number of trade publishers
+	NumPublishers = config.GetIntEnv("NUM_PUBLISHERS", 4)
 )

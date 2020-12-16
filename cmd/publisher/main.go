@@ -21,11 +21,25 @@ func main() {
 	defer c.Close()
 
 	subject := "trades"
+	trades := make(chan core.Trade, config.NumPublishers)
+
+	for i := 0; i < config.NumPublishers; i++ {
+		go func(id int) {
+			log.Logger.Debugf("[Worker %d] Starting...", id)
+			for {
+				select {
+				case t := <-trades:
+					log.Logger.Debugf("[Worker %d] Publishing in \"%s\": \"%s\"", id, subject, t)
+					c.Publish(subject, t)
+				}
+			}
+		}(i)
+	}
 
 	publish := func() {
-		trade := core.NewRandTrade()
-		log.Logger.Debugf("Publishing in \"%s\": \"%s\"", subject, trade)
-		c.Publish(subject, core.NewRandTrade())
+		for i := 0; i < config.NumPublishers; i++ {
+			trades <- core.NewRandTrade()
+		}
 	}
 
 	scheduler := scheduler.New(config.PublishInterval, publish)
