@@ -12,4 +12,6 @@ var (
 	NatsURL = config.GetEnv("NATS_URL", nats.DefaultURL)
 	// NumSubscribers is the number of trade subscribers
 	NumSubscribers = config.GetIntEnv("NUM_SUBSCRIBERS", 4)
+	// Subject is the subject for subscribing to trades
+	Subject = config.GetEnv("SUBJECT", "trades")
 )

@@ -18,7 +18,6 @@ func main() {
 	c, _ := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
 	defer c.Close()
 
-	subject := "trades"
 	queue := "workers"
 	wg := sync.WaitGroup{}
 
@@ -29,7 +28,7 @@ func main() {
 			defer wg.Done()
 
 			ch := make(chan *nats.Msg, 64)
-			sub, err := nc.ChanQueueSubscribe(subject, queue, ch)
+			sub, err := nc.ChanQueueSubscribe(config.Subject, queue, ch)
 			if err != nil {
 				log.Logger.Fatal(err)
 			}
@@ -38,7 +37,7 @@ func main() {
 				sub.Unsubscribe()
 			}()
 
-			log.Logger.Debugf("[Worker %d] Subscribed to \"%s\"...", id, subject)
+			log.Logger.Debugf("[Worker %d] Subscribed to \"%s\"...", id, config.Subject)
 
 			for msg := range ch {
 				log.Logger.Debugf("[Worker %d] Received: %s", id, msg)

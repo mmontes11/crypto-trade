@@ -17,10 +17,12 @@ func main() {
 	if err != nil {
 		log.Logger.Fatal(err)
 	}
-	c, _ := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
+	c, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
+	if err != nil {
+		log.Logger.Fatal(err)
+	}
 	defer c.Close()
 
-	subject := "trades"
 	trades := make(chan core.Trade, config.NumPublishers)
 
 	for i := 0; i < config.NumPublishers; i++ {
@@ -29,8 +31,8 @@ func main() {
 			for {
 				select {
 				case t := <-trades:
-					log.Logger.Debugf("[Worker %d] Publishing in \"%s\": \"%s\"", id, subject, t)
-					c.Publish(subject, t)
+					log.Logger.Debugf("[Worker %d] Publishing in \"%s\": \"%s\"", id, config.Subject, t)
+					c.Publish(config.Subject, t)
 				}
 			}
 		}(i)
