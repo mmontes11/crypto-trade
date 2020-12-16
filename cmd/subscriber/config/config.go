@@ -10,4 +10,6 @@ var (
 	Env = config.GetEnv("ENV", "development")
 	// NatsURL is the Nats instance used for publishing
 	NatsURL = config.GetEnv("NATS_URL", nats.DefaultURL)
+	// NumSubscribers is the number of trade subscribers
+	NumSubscribers = config.GetIntEnv("NUM_SUBSCRIBERS", 4)
 )
