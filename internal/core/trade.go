@@ -12,7 +12,7 @@ type Trade struct {
 	Side string `json:"side"`
 	// Number of cryptocurrencies traded
 	Size TradePrice `json:"size"`
-	// Price of the traded cryptocurrencies
+	// Price of an unit of the cryptocurrency traded
 	Price TradePrice `json:"price"`
 }
 
@@ -32,7 +32,7 @@ const (
 // NewRandTrade creates a random Trade
 func NewRandTrade() Trade {
 	size := randSize()
-	price := randPrice(size)
+	price := randPrice(size.Currency)
 
 	return Trade{
 		Time:  time.Now(),
@@ -64,23 +64,15 @@ func randSize() TradePrice {
 	}
 }
 
-func randPrice(size TradePrice) TradePrice {
-	cryptoUnitPrice := randCryptoUnitPrice(size.Currency)
-	price := size.Price * cryptoUnitPrice.Price
-
-	return TradePrice{
-		Price:    price,
-		Currency: cryptoUnitPrice.Currency,
-	}
-}
-
-func randCryptoUnitPrice(crypto string) TradePrice {
+func randPrice(crypto string) TradePrice {
 	var price float64
 	switch crypto {
 	case btc:
 		price = randFloat(18000, 22000)
 	case eth:
 		price = randFloat(500, 800)
+	default:
+		panic("Unsupported cryptocurrency: " + crypto)
 	}
 
 	var currency string
