@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"database/sql"
 	"sync"
 
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/config"
@@ -16,12 +17,14 @@ type SubscribeControllerI interface {
 // SubscribeController implements controller operations
 type SubscribeController struct {
 	natsConn *nats.Conn
+	db       *sql.DB
 }
 
 // NewSubscribeController creates a new controller instance
-func NewSubscribeController(natsConn *nats.Conn) SubscribeControllerI {
+func NewSubscribeController(natsConn *nats.Conn, db *sql.DB) SubscribeControllerI {
 	return &SubscribeController{
 		natsConn,
+		db,
 	}
 }
 
