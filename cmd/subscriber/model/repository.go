@@ -22,7 +22,7 @@ func NewTradeRepository() TradeRepositoryI {
 
 // SaveTrade creates a new trade
 func (r *TradeRepository) SaveTrade(ctx ctx.Context, tx *sql.Tx, t core.Trade) error {
-	query := "INSERT INTO trades (* EXCEPT(event_time)) VALUES(?, ?, ?, ?, ?)"
+	query := "INSERT INTO trades VALUES(?, ?, ?, ?, ?, ?)"
 	stmt, err := tx.PrepareContext(ctx, query)
 	defer stmt.Close()
 	if err != nil {
@@ -30,6 +30,7 @@ func (r *TradeRepository) SaveTrade(ctx ctx.Context, tx *sql.Tx, t core.Trade) e
 	}
 
 	params := []interface{}{
+		t.Time,
 		t.Side,
 		t.CryptoSize.Size,
 		t.CryptoSize.Currency,
