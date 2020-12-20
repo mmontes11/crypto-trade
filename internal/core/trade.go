@@ -7,18 +7,21 @@ import (
 
 // Trade cryptocurrency trade
 type Trade struct {
-	Time time.Time `json:"time"`
-	// Buy or sell
-	Side string `json:"side"`
-	// Number of cryptocurrencies traded
-	Size TradePrice `json:"size"`
-	// Price of an unit of the cryptocurrency traded
-	Price TradePrice `json:"price"`
+	Time       time.Time  `json:"time"`
+	Side       string     `json:"side"`
+	CryptoSize CryptoSize `json:"cryptoSize"`
+	Price      Price      `json:"price"`
 }
 
-// TradePrice price of a (crypto)currency expressed in other currency
-type TradePrice struct {
-	Price    float64 `json:"price"`
+// CryptoSize is the number of cryptocurrencies traded
+type CryptoSize struct {
+	Size     float64 `json:"size"`
+	Currency string  `json:"currency"`
+}
+
+// Price is the price of an unit of the cryptocurrency traded
+type Price struct {
+	Amount   float64 `json:"amount"`
 	Currency string  `json:"currency"`
 }
 
@@ -35,10 +38,10 @@ func NewRandTrade() Trade {
 	price := randPrice(size.Currency)
 
 	return Trade{
-		Time:  time.Now(),
-		Side:  randSide(),
-		Size:  size,
-		Price: price,
+		Time:       time.Now(),
+		Side:       randSide(),
+		CryptoSize: size,
+		Price:      price,
 	}
 }
 
@@ -49,8 +52,8 @@ func randSide() string {
 	return "buy"
 }
 
-func randSize() TradePrice {
-	price := randFloat(0.1, 10)
+func randSize() CryptoSize {
+	size := randFloat(0.1, 10)
 	var currency string
 	if randBool() {
 		currency = btc
@@ -58,19 +61,19 @@ func randSize() TradePrice {
 		currency = eth
 	}
 
-	return TradePrice{
-		Price:    price,
+	return CryptoSize{
+		Size:     size,
 		Currency: currency,
 	}
 }
 
-func randPrice(crypto string) TradePrice {
-	var price float64
+func randPrice(crypto string) Price {
+	var amount float64
 	switch crypto {
 	case btc:
-		price = randFloat(18000, 22000)
+		amount = randFloat(18000, 22000)
 	case eth:
-		price = randFloat(500, 800)
+		amount = randFloat(500, 800)
 	default:
 		panic("Unsupported cryptocurrency: " + crypto)
 	}
@@ -82,8 +85,8 @@ func randPrice(crypto string) TradePrice {
 		currency = eur
 	}
 
-	return TradePrice{
-		Price:    price,
+	return Price{
+		Amount:   amount,
 		Currency: currency,
 	}
 }
