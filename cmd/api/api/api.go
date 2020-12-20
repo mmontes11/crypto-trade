@@ -6,12 +6,26 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/mmontes11/crypto-trade/cmd/api/config"
+	"github.com/mmontes11/crypto-trade/cmd/api/controller"
 	"github.com/mmontes11/crypto-trade/cmd/api/log"
 )
 
-// Init starts a new HTTP server
-func Init() {
-	router := createRouter()
+// API implements a REST API
+type API struct {
+	handler Handler
+}
+
+// NewAPI creates a new API
+func NewAPI(ctrl controller.TradeControllerI) API {
+	handler := NewHandler(ctrl)
+	return API{
+		handler,
+	}
+}
+
+// Listen starts a new HTTP server
+func (a API) Listen() {
+	router := a.createRouter()
 	addr := fmt.Sprintf(":%s", config.Port)
 
 	log.Logger.Info("Server listening on port ", config.Port)
@@ -23,10 +37,10 @@ func Init() {
 	}
 }
 
-func createRouter() *mux.Router {
+func (a API) createRouter() *mux.Router {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/health", healthHandler)
+	router.HandleFunc("/health", a.handler.healthHandler)
 
 	return router
 }
