@@ -5,7 +5,7 @@ import (
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/controller"
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/log"
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/model"
-	ch "github.com/mmontes11/crypto-trade/pkg/clickhouse"
+	ch "github.com/mmontes11/crypto-trade/pkg/database/clickhouse"
 	nats "github.com/nats-io/nats.go"
 )
 

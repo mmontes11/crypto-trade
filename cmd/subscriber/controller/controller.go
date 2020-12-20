@@ -1,6 +1,7 @@
 package controller
 
 import (
+	ctx "context"
 	"database/sql"
 	"encoding/json"
 	"sync"
@@ -9,6 +10,7 @@ import (
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/log"
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/model"
 	"github.com/mmontes11/crypto-trade/internal/core"
+	"github.com/mmontes11/crypto-trade/pkg/database"
 	nats "github.com/nats-io/nats.go"
 )
 
@@ -85,6 +87,9 @@ func (tc *TradeController) handleMessage(msg *nats.Msg) {
 }
 
 func (tc *TradeController) saveTrade(t core.Trade) error {
-	tc.repository.SaveTrade(t)
-	return nil
+	txFn := func(ctx ctx.Context, tx *sql.Tx) error {
+		return tc.repository.SaveTrade(ctx, tx, t)
+	}
+
+	return database.Tx(ctx.Background(), tc.db, txFn)
 }
