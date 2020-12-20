@@ -2,35 +2,40 @@ package controller
 
 import (
 	"database/sql"
+	"encoding/json"
 	"sync"
 
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/config"
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/log"
+	"github.com/mmontes11/crypto-trade/cmd/subscriber/model"
+	"github.com/mmontes11/crypto-trade/internal/core"
 	nats "github.com/nats-io/nats.go"
 )
 
-// SubscribeControllerI defines controller operations
-type SubscribeControllerI interface {
+// TradeControllerI defines controller operations
+type TradeControllerI interface {
 	Subscribe()
 }
 
-// SubscribeController implements controller operations
-type SubscribeController struct {
-	natsConn *nats.Conn
-	db       *sql.DB
+// TradeController implements controller operations
+type TradeController struct {
+	natsConn   *nats.Conn
+	db         *sql.DB
+	repository model.TradeRepositoryI
 }
 
-// NewSubscribeController creates a new controller instance
-func NewSubscribeController(natsConn *nats.Conn, db *sql.DB) SubscribeControllerI {
-	return &SubscribeController{
+// NewTradeController creates a new controller instance
+func NewTradeController(natsConn *nats.Conn, db *sql.DB, r model.TradeRepositoryI) TradeControllerI {
+	return &TradeController{
 		natsConn,
 		db,
+		r,
 	}
 }
 
 // Subscribe subscribe to trading subject
-func (sc *SubscribeController) Subscribe() {
-	c, _ := nats.NewEncodedConn(sc.natsConn, nats.JSON_ENCODER)
+func (tc *TradeController) Subscribe() {
+	c, _ := nats.NewEncodedConn(tc.natsConn, nats.JSON_ENCODER)
 	defer c.Close()
 
 	queue := "workers"
@@ -43,7 +48,7 @@ func (sc *SubscribeController) Subscribe() {
 			defer wg.Done()
 
 			ch := make(chan *nats.Msg, 64)
-			sub, err := sc.natsConn.ChanQueueSubscribe(config.Subject, queue, ch)
+			sub, err := tc.natsConn.ChanQueueSubscribe(config.Subject, queue, ch)
 			if err != nil {
 				log.Logger.Fatal(err)
 			}
@@ -55,10 +60,31 @@ func (sc *SubscribeController) Subscribe() {
 			log.Logger.Debugf("[Worker %d] Subscribed to \"%s\"...", id, config.Subject)
 
 			for msg := range ch {
-				log.Logger.Debugf("[Worker %d] Received: %s", id, msg)
+				log.Logger.Debugf("[Worker %d] Received: %s", id, msg.Data)
+				tc.handleMessage(msg)
 			}
 		}(i)
 	}
 
 	wg.Wait()
+}
+
+func (tc *TradeController) handleMessage(msg *nats.Msg) {
+	var t core.Trade
+	err := json.Unmarshal(msg.Data, &t)
+
+	if err != nil {
+		log.Logger.Error(err)
+		return
+	}
+
+	err = tc.saveTrade(t)
+	if err != nil {
+		log.Logger.Error(err)
+	}
+}
+
+func (tc *TradeController) saveTrade(t core.Trade) error {
+	tc.repository.SaveTrade(t)
+	return nil
 }
