@@ -6,5 +6,5 @@ CREATE TABLE trades (
     price Float64,
     price_currency String,
     total_price MATERIALIZED crypto_size * price
-) Engine = MergeTree() PARTITION BY toYYYYMMDD(event_time)
+) Engine = MergeTree() PARTITION BY (toYYYYMMDD(event_time), side)
 ORDER BY event_time;
