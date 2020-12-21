@@ -25,6 +25,27 @@ type Price struct {
 	Currency string  `json:"currency"`
 }
 
+// TradeParams used in trade related methods
+type TradeParams struct {
+	Crypto   string
+	Currency string
+	Limit    int
+}
+
+// Validate checks if params are valid
+func (tp *TradeParams) Validate() error {
+	if tp.Crypto == "" {
+		return &ErrInvalidField{"crypto"}
+	}
+	if tp.Currency == "" {
+		return &ErrInvalidField{"currency"}
+	}
+	if tp.Limit == 0 {
+		return &ErrInvalidField{"limit"}
+	}
+	return nil
+}
+
 const (
 	btc = "btc"
 	eth = "eth"

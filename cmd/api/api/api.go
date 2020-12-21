@@ -42,5 +42,8 @@ func (a API) createRouter() *mux.Router {
 
 	router.HandleFunc("/health", a.handler.healthHandler)
 
+	api := router.PathPrefix("/api").Subrouter()
+	api.HandleFunc("/trades", a.handler.tradesHandler).Methods(http.MethodGet)
+
 	return router
 }

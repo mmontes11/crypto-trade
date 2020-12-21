@@ -24,10 +24,10 @@ func NewTradeRepository() TradeRepositoryI {
 func (r *TradeRepository) SaveTrade(ctx ctx.Context, tx *sql.Tx, t core.Trade) error {
 	query := "INSERT INTO trades VALUES(?, ?, ?, ?, ?, ?)"
 	stmt, err := tx.PrepareContext(ctx, query)
-	defer stmt.Close()
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 
 	params := []interface{}{
 		t.Time,
