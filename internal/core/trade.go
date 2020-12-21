@@ -29,6 +29,7 @@ type Price struct {
 type TradeParams struct {
 	Crypto   string
 	Currency string
+	Side     string
 	Limit    int
 }
 

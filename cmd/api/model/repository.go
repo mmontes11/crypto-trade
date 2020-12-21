@@ -23,7 +23,25 @@ func NewTradeRepository() TradeRepositoryI {
 
 // GetTrades retrieves trades
 func (r *TradeRepository) GetTrades(ctx ctx.Context, tx *sql.Tx, params core.TradeParams) ([]core.Trade, error) {
-	query := `
+	query, args := getQuery(params)
+	stmt, err := tx.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.QueryContext(ctx, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return decodeRows(rows)
+}
+
+func getQuery(params core.TradeParams) (query string, args []interface{}) {
+	args = []interface{}{}
+	query = `
 		SELECT
 			toStartOfMinute(t.event_time) AS time,
 			t.side,
@@ -41,28 +59,25 @@ func (r *TradeRepository) GetTrades(ctx ctx.Context, tx *sql.Tx, params core.Tra
 		HAVING
 			t.crypto_currency = ?
 			AND t.price_currency = ?
+		
+	`
+	args = append(args, params.Crypto, params.Currency)
+
+	if params.Side != "" {
+		query += `
+			AND t.side = ?
+		`
+		args = append(args, params.Side)
+	}
+
+	query += `
 		ORDER BY
 			time DESC
 		LIMIT ?
 	`
-	stmt, err := tx.PrepareContext(ctx, query)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt.Close()
+	args = append(args, params.Limit)
 
-	args := []interface{}{
-		params.Crypto,
-		params.Currency,
-		params.Limit,
-	}
-	rows, err := stmt.QueryContext(ctx, args...)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	return decodeRows(rows)
+	return
 }
 
 func decodeRows(rows *sql.Rows) ([]core.Trade, error) {
