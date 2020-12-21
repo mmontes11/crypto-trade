@@ -27,6 +27,7 @@ type Price struct {
 
 // TradeParams used in trade related methods
 type TradeParams struct {
+	GroupBy  string
 	Crypto   string
 	Currency string
 	Side     string
@@ -35,6 +36,15 @@ type TradeParams struct {
 
 // Validate checks if params are valid
 func (tp *TradeParams) Validate() error {
+	supportedGroupBy := false
+	for _, v := range []string{"minute", "hour", "day", "month", "year"} {
+		if v == tp.GroupBy {
+			supportedGroupBy = true
+		}
+	}
+	if !supportedGroupBy {
+		return &ErrInvalidField{"crypto"}
+	}
 	if tp.Crypto == "" {
 		return &ErrInvalidField{"crypto"}
 	}

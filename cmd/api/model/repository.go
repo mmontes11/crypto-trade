@@ -3,6 +3,7 @@ package model
 import (
 	ctx "context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/mmontes11/crypto-trade/internal/core"
@@ -41,9 +42,9 @@ func (r *TradeRepository) GetTrades(ctx ctx.Context, tx *sql.Tx, params core.Tra
 
 func getQuery(params core.TradeParams) (query string, args []interface{}) {
 	args = []interface{}{}
-	query = `
+	query = fmt.Sprintf(`
 		SELECT
-			toStartOfMinute(t.event_time) AS time,
+			%s(t.event_time) AS time,
 			t.side,
 			AVG(t.crypto_size) AS size,
 			t.crypto_currency,
@@ -60,7 +61,7 @@ func getQuery(params core.TradeParams) (query string, args []interface{}) {
 			t.crypto_currency = ?
 			AND t.price_currency = ?
 		
-	`
+	`, getTimeAggFunc(params))
 	args = append(args, params.Crypto, params.Currency)
 
 	if params.Side != "" {
@@ -78,6 +79,23 @@ func getQuery(params core.TradeParams) (query string, args []interface{}) {
 	args = append(args, params.Limit)
 
 	return
+}
+
+func getTimeAggFunc(params core.TradeParams) string {
+	switch params.GroupBy {
+	case "minute":
+		return "toStartOfMinute"
+	case "hour":
+		return "toStartOfHour"
+	case "day":
+		return "toStartOfDay"
+	case "month":
+		return "toStartOfMonth"
+	case "year":
+		return "toStartOfYear"
+	default:
+		return "toStartOfMinute"
+	}
 }
 
 func decodeRows(rows *sql.Rows) ([]core.Trade, error) {

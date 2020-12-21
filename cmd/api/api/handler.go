@@ -56,6 +56,7 @@ func (h Handler) tradesHandler(w http.ResponseWriter, r *http.Request) {
 
 func getTradeParams(r *http.Request) (core.TradeParams, error) {
 	q := r.URL.Query()
+	groupBy := getStringParam(q.Get("groupBy"), "minute")
 	crypto := q.Get("crypto")
 	currency := q.Get("currency")
 	side := q.Get("side")
@@ -66,6 +67,7 @@ func getTradeParams(r *http.Request) (core.TradeParams, error) {
 	}
 
 	params := core.TradeParams{
+		GroupBy:  groupBy,
 		Crypto:   crypto,
 		Currency: currency,
 		Side:     side,
@@ -73,6 +75,13 @@ func getTradeParams(r *http.Request) (core.TradeParams, error) {
 	}
 
 	return params, params.Validate()
+}
+
+func getStringParam(param, defaultValue string) string {
+	if param == "" {
+		return defaultValue
+	}
+	return param
 }
 
 func parseIntParam(paramStr string, defaultValue int) (int, error) {
