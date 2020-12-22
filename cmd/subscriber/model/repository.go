@@ -32,8 +32,8 @@ func (r *TradeRepository) SaveTrade(ctx ctx.Context, tx *sql.Tx, t core.Trade) e
 	params := []interface{}{
 		t.Time,
 		t.Side,
-		t.CryptoSize.Size,
-		t.CryptoSize.Currency,
+		t.Size.Amount,
+		t.Size.Currency,
 		t.Price.Amount,
 		t.Price.Currency,
 	}

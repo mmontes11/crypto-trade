@@ -43,14 +43,14 @@ func (r *TradeRepository) GetTrades(ctx ctx.Context, tx *sql.Tx, params core.Tra
 func getQuery(params core.TradeParams) (query string, args []interface{}) {
 	query = fmt.Sprintf(`
 		SELECT
-			%s(t.event_time) AS time,
+			%s(t.time) AS time,
 			t.side,
-			AVG(t.crypto_size) AS size,
+			AVG(t.size) AS size,
 			AVG(t.price) AS price
 		FROM
 			trades t
 		WHERE
-			t.crypto_currency = ?
+			t.size_currency = ?
 			AND t.price_currency = ?
 		GROUP BY
 			time,
@@ -90,8 +90,8 @@ func decodeRows(rows *sql.Rows, params core.TradeParams) ([]core.Trade, error) {
 		var (
 			time  time.Time
 			side  string
-			size  float64
-			price float64
+			size  float32
+			price float32
 		)
 		if err := rows.Scan(&time, &side, &size, &price); err != nil {
 			return nil, err
@@ -100,11 +100,11 @@ func decodeRows(rows *sql.Rows, params core.TradeParams) ([]core.Trade, error) {
 		trade := core.Trade{
 			Time: time,
 			Side: side,
-			CryptoSize: core.CryptoSize{
-				Size:     size,
+			Size: core.CurrencyAmount{
+				Amount:   size,
 				Currency: params.Crypto,
 			},
-			Price: core.Price{
+			Price: core.CurrencyAmount{
 				Amount:   price,
 				Currency: params.Currency,
 			},

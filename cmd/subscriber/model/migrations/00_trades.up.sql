@@ -1,10 +1,10 @@
-CREATE TABLE trades (
-    event_time DateTime DEFAULT now(),
+CREATE TABLE IF NOT EXISTS trades (
+    time DateTime DEFAULT now(),
     side String,
-    crypto_size Float64,
-    crypto_currency String,
-    price Float64,
+    size Float32,
+    size_currency String,
+    price Float32,
     price_currency String,
-    total_price MATERIALIZED crypto_size * price
-) Engine = MergeTree() PARTITION BY (toYYYYMMDD(event_time), side)
-ORDER BY event_time;
+    total_price MATERIALIZED size * price
+) Engine = MergeTree() PARTITION BY (toYYYYMMDD(time), side)
+ORDER BY time;

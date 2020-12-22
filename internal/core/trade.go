@@ -7,21 +7,15 @@ import (
 
 // Trade cryptocurrency trade
 type Trade struct {
-	Time       time.Time  `json:"time"`
-	Side       string     `json:"side"`
-	CryptoSize CryptoSize `json:"cryptoSize"`
-	Price      Price      `json:"price"`
+	Time  time.Time      `json:"time"`
+	Side  string         `json:"side"`
+	Size  CurrencyAmount `json:"size"`
+	Price CurrencyAmount `json:"price"`
 }
 
-// CryptoSize is the number of cryptocurrencies traded
-type CryptoSize struct {
-	Size     float64 `json:"size"`
-	Currency string  `json:"currency"`
-}
-
-// Price is the price of an unit of the cryptocurrency traded
-type Price struct {
-	Amount   float64 `json:"amount"`
+// CurrencyAmount quantifies the amount of an specific currency
+type CurrencyAmount struct {
+	Amount   float32 `json:"amount"`
 	Currency string  `json:"currency"`
 }
 
@@ -69,10 +63,10 @@ func NewRandTrade() Trade {
 	price := randPrice(size.Currency)
 
 	return Trade{
-		Time:       time.Now(),
-		Side:       randSide(),
-		CryptoSize: size,
-		Price:      price,
+		Time:  time.Now(),
+		Side:  randSide(),
+		Size:  size,
+		Price: price,
 	}
 }
 
@@ -83,7 +77,7 @@ func randSide() string {
 	return "buy"
 }
 
-func randSize() CryptoSize {
+func randSize() CurrencyAmount {
 	size := randFloat(0.1, 10)
 	var currency string
 	if randBool() {
@@ -92,14 +86,14 @@ func randSize() CryptoSize {
 		currency = eth
 	}
 
-	return CryptoSize{
-		Size:     size,
+	return CurrencyAmount{
+		Amount:   size,
 		Currency: currency,
 	}
 }
 
-func randPrice(crypto string) Price {
-	var amount float64
+func randPrice(crypto string) CurrencyAmount {
+	var amount float32
 	switch crypto {
 	case btc:
 		amount = randFloat(18000, 22000)
@@ -116,14 +110,14 @@ func randPrice(crypto string) Price {
 		currency = eur
 	}
 
-	return Price{
+	return CurrencyAmount{
 		Amount:   amount,
 		Currency: currency,
 	}
 }
 
-func randFloat(min, max float64) float64 {
-	return min + rand.Float64()*(max-min)
+func randFloat(min, max float32) float32 {
+	return min + rand.Float32()*(max-min)
 }
 
 func randBool() bool {
