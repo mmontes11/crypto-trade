@@ -30,7 +30,6 @@ type TradeParams struct {
 	GroupBy  string
 	Crypto   string
 	Currency string
-	Side     string
 	Limit    int
 }
 

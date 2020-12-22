@@ -37,47 +37,33 @@ func (r *TradeRepository) GetTrades(ctx ctx.Context, tx *sql.Tx, params core.Tra
 	}
 	defer rows.Close()
 
-	return decodeRows(rows)
+	return decodeRows(rows, params)
 }
 
 func getQuery(params core.TradeParams) (query string, args []interface{}) {
-	args = []interface{}{}
 	query = fmt.Sprintf(`
 		SELECT
 			%s(t.event_time) AS time,
 			t.side,
 			AVG(t.crypto_size) AS size,
-			t.crypto_currency,
-			AVG(t.price) AS price,
-			t.price_currency
+			AVG(t.price) AS price
 		FROM
 			trades t
-		GROUP BY
-			time,
-			t.side,
-			t.crypto_currency,
-			t.price_currency
-		HAVING
+		WHERE
 			t.crypto_currency = ?
 			AND t.price_currency = ?
-		
-	`, getTimeAggFunc(params))
-	args = append(args, params.Crypto, params.Currency)
-
-	if params.Side != "" {
-		query += `
-			AND t.side = ?
-		`
-		args = append(args, params.Side)
-	}
-
-	query += `
+		GROUP BY
+			time,
+			t.side
 		ORDER BY
-			time DESC
+			time
 		LIMIT ?
-	`
-	args = append(args, params.Limit)
-
+	`, getTimeAggFunc(params))
+	args = []interface{}{
+		params.Crypto,
+		params.Currency,
+		params.Limit,
+	}
 	return
 }
 
@@ -98,18 +84,16 @@ func getTimeAggFunc(params core.TradeParams) string {
 	}
 }
 
-func decodeRows(rows *sql.Rows) ([]core.Trade, error) {
+func decodeRows(rows *sql.Rows, params core.TradeParams) ([]core.Trade, error) {
 	trades := []core.Trade{}
 	for rows.Next() {
 		var (
-			time           time.Time
-			side           string
-			size           float64
-			cryptoCurrency string
-			price          float64
-			priceCurrency  string
+			time  time.Time
+			side  string
+			size  float64
+			price float64
 		)
-		if err := rows.Scan(&time, &side, &size, &cryptoCurrency, &price, &priceCurrency); err != nil {
+		if err := rows.Scan(&time, &side, &size, &price); err != nil {
 			return nil, err
 		}
 
@@ -118,11 +102,11 @@ func decodeRows(rows *sql.Rows) ([]core.Trade, error) {
 			Side: side,
 			CryptoSize: core.CryptoSize{
 				Size:     size,
-				Currency: cryptoCurrency,
+				Currency: params.Crypto,
 			},
 			Price: core.Price{
 				Amount:   price,
-				Currency: priceCurrency,
+				Currency: params.Currency,
 			},
 		}
 		trades = append(trades, trade)

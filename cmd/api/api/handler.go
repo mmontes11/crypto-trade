@@ -59,7 +59,6 @@ func getTradeParams(r *http.Request) (core.TradeParams, error) {
 	groupBy := getStringParam(q.Get("groupBy"), "minute")
 	crypto := q.Get("crypto")
 	currency := q.Get("currency")
-	side := q.Get("side")
 	limit, err := parseIntParam(q.Get("limit"), 100)
 
 	if err != nil {
@@ -70,7 +69,6 @@ func getTradeParams(r *http.Request) (core.TradeParams, error) {
 		GroupBy:  groupBy,
 		Crypto:   crypto,
 		Currency: currency,
-		Side:     side,
 		Limit:    limit,
 	}
 
