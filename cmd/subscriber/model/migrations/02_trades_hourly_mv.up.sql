@@ -10,4 +10,4 @@ GROUP BY time,
 	side,
 	size_currency,
 	price_currency
-ORDER BY time;
+ORDER BY (time, side, size_currency, price_currency);

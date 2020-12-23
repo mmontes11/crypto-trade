@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS trades (
     price Float32,
     price_currency String,
     total_price MATERIALIZED size * price
-) Engine = MergeTree() PARTITION BY (toYYYYMMDD(time), side)
-ORDER BY time;
+) Engine = MergeTree() PARTITION BY (toYYYYMMDD(time))
+ORDER BY (time, side, size_currency, price_currency);

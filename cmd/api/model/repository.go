@@ -41,14 +41,14 @@ func (r *TradeRepository) GetTrades(ctx ctx.Context, tx *sql.Tx, params core.Tra
 
 const (
 	rawQuery = `
-		SELECT time,
+		SELECT t.time,
 			t.side,
 			t.size,
 			t.price
 		FROM trades t
 		WHERE t.size_currency = ?
 			AND t.price_currency = ?
-		ORDER BY t.time
+		ORDER BY (t.time, t.side)
 		LIMIT ?
 	`
 	aggByMinuteQuery = `
@@ -59,9 +59,9 @@ const (
 		FROM trades t
 		WHERE t.size_currency = ?
 			AND t.price_currency = ?
-		GROUP BY t.time,
+		GROUP BY time,
 			t.side
-		ORDER BY t.time
+		ORDER BY (time, t.side)
 		LIMIT ?
 	`
 	aggByHourQuery = `
@@ -74,26 +74,26 @@ const (
 			AND t.price_currency = ?
 		GROUP BY t.time,
 			t.side
-		ORDER BY t.time
+		ORDER BY (t.time, t.side)
 		LIMIT ?
 	`
 )
 
 func getQuery(params core.TradeParams) (query string, args []interface{}) {
+	switch params.GroupBy {
+	case "second":
+		query = rawQuery
+	case "minute":
+		query = aggByMinuteQuery
+	case "hour":
+		query = aggByHourQuery
+	default:
+		query = rawQuery
+	}
 	args = []interface{}{
 		params.Crypto,
 		params.Currency,
 		params.Limit,
-	}
-	switch params.GroupBy {
-	case "hour":
-		query = aggByHourQuery
-	case "minute":
-		query = aggByMinuteQuery
-	case "second":
-		query = rawQuery
-	default:
-		query = rawQuery
 	}
 	return
 }
