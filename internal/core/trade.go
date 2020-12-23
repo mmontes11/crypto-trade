@@ -13,7 +13,7 @@ type Trade struct {
 	Price CurrencyAmount `json:"price"`
 }
 
-// CurrencyAmount quantifies the amount of an specific currency
+// CurrencyAmount quantifies the amount of a specific currency
 type CurrencyAmount struct {
 	Amount   float32 `json:"amount"`
 	Currency string  `json:"currency"`
@@ -29,14 +29,16 @@ type TradeParams struct {
 
 // Validate checks if params are valid
 func (tp *TradeParams) Validate() error {
-	supportedGroupBy := false
-	for _, v := range []string{"minute", "hour", "day", "month", "year"} {
-		if v == tp.GroupBy {
-			supportedGroupBy = true
+	if tp.GroupBy != "" {
+		supportedGroupBy := false
+		for _, v := range []string{"second", "minute", "hour"} {
+			if v == tp.GroupBy {
+				supportedGroupBy = true
+			}
 		}
-	}
-	if !supportedGroupBy {
-		return &ErrInvalidField{"crypto"}
+		if !supportedGroupBy {
+			return &ErrInvalidField{"groupBy"}
+		}
 	}
 	if tp.Crypto == "" {
 		return &ErrInvalidField{"crypto"}

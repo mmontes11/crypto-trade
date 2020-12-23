@@ -3,7 +3,6 @@ package model
 import (
 	ctx "context"
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/mmontes11/crypto-trade/internal/core"
@@ -40,48 +39,63 @@ func (r *TradeRepository) GetTrades(ctx ctx.Context, tx *sql.Tx, params core.Tra
 	return decodeRows(rows, params)
 }
 
-func getQuery(params core.TradeParams) (query string, args []interface{}) {
-	query = fmt.Sprintf(`
-		SELECT
-			%s(t.time) AS time,
+const (
+	rawQuery = `
+		SELECT time,
+			t.side,
+			t.size,
+			t.price
+		FROM trades t
+		WHERE t.size_currency = ?
+			AND t.price_currency = ?
+		ORDER BY t.time
+		LIMIT ?
+	`
+	aggByMinuteQuery = `
+		SELECT toStartOfMinute(t.time) AS time,
 			t.side,
 			AVG(t.size) AS size,
 			AVG(t.price) AS price
-		FROM
-			trades t
-		WHERE
-			t.size_currency = ?
+		FROM trades t
+		WHERE t.size_currency = ?
 			AND t.price_currency = ?
-		GROUP BY
-			time,
+		GROUP BY t.time,
 			t.side
-		ORDER BY
-			time
+		ORDER BY t.time
 		LIMIT ?
-	`, getTimeAggFunc(params))
+	`
+	aggByHourQuery = `
+		SELECT t.time,
+			t.side,
+			avgMerge(t.avg_size_state) AS size,
+			avgMerge(t.avg_price_state) AS price
+		FROM trades_hourly t
+		WHERE t.size_currency = ?
+			AND t.price_currency = ?
+		GROUP BY t.time,
+			t.side
+		ORDER BY t.time
+		LIMIT ?
+	`
+)
+
+func getQuery(params core.TradeParams) (query string, args []interface{}) {
 	args = []interface{}{
 		params.Crypto,
 		params.Currency,
 		params.Limit,
 	}
-	return
-}
-
-func getTimeAggFunc(params core.TradeParams) string {
 	switch params.GroupBy {
-	case "minute":
-		return "toStartOfMinute"
 	case "hour":
-		return "toStartOfHour"
-	case "day":
-		return "toStartOfDay"
-	case "month":
-		return "toStartOfMonth"
-	case "year":
-		return "toStartOfYear"
+		query = aggByHourQuery
+	case "minute":
+		query = aggByMinuteQuery
+	case "second":
+		query = rawQuery
 	default:
-		return "toStartOfMinute"
+		query = rawQuery
 	}
+	return
 }
 
 func decodeRows(rows *sql.Rows, params core.TradeParams) ([]core.Trade, error) {
