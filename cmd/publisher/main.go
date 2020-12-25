@@ -23,11 +23,13 @@ func main() {
 	}
 	defer c.Close()
 
+	log.Logger.Info("Connected to NATS")
+
 	trades := make(chan core.Trade, config.NumPublishers)
 
 	for i := 0; i < config.NumPublishers; i++ {
 		go func(id int) {
-			log.Logger.Debugf("[Worker %d] Starting...", id)
+			log.Logger.Infof("[Worker %d] Started publishing", id)
 			for {
 				select {
 				case t := <-trades:

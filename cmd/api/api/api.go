@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mmontes11/crypto-trade/cmd/api/config"
 	"github.com/mmontes11/crypto-trade/cmd/api/controller"
-	"github.com/mmontes11/crypto-trade/cmd/api/log"
 )
 
 // API implements a REST API
@@ -24,17 +23,11 @@ func NewAPI(ctrl controller.TradeControllerI) API {
 }
 
 // Listen starts a new HTTP server
-func (a API) Listen() {
+func (a API) Listen() error {
 	router := a.createRouter()
 	addr := fmt.Sprintf(":%s", config.Port)
 
-	log.Logger.Info("Server listening on port ", config.Port)
-	log.Logger.Info("Environment: ", config.Env)
-
-	err := http.ListenAndServe(addr, router)
-	if err != nil {
-		log.Logger.Fatal(err)
-	}
+	return http.ListenAndServe(addr, router)
 }
 
 func (a API) createRouter() *mux.Router {

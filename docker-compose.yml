@@ -8,5 +8,30 @@ services:
     environment: 
       - API_SERVICE_PORT=10000
       - ENV=production
+      - CLICKHOUSE_URL=tcp://clickhouse:9000?username=crypto&password=crypto&database=crypto
     ports:
       - "10000:10000"
+  publisher:
+    image: mmontes11/crypto-trade-publisher
+    depends_on:
+      - nats
+    environment: 
+      - ENV=production
+      - NATS_URL=nats://nats:4222
+      - PUBLISH_INTERVAL_MS=500
+      - NUM_PUBLISHERS=4
+      - SUBJECT=trades
+  subscriber:
+    image: mmontes11/crypto-trade-subscriber
+    depends_on:
+      - nats
+      - clickhouse
+    environment: 
+      - ENV=production
+      - NATS_URL=nats://nats:4222
+      - NUM_SUBSCRIBERS=4
+      - SUBJECT=trades
+      - CLICKHOUSE_URL=tcp://clickhouse:9000?username=crypto&password=crypto&database=crypto
+      - MIGRATIONS_URL=file:///data/migrations
+    volumes:
+      - ./cmd/subscriber/model/migrations:/data/migrations

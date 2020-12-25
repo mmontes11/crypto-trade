@@ -18,10 +18,14 @@ func main() {
 		log.Logger.Fatal(err)
 	}
 
-	log.Logger.Infof("Connected to ClickHouse")
+	log.Logger.Info("Connected to ClickHouse")
 
 	tradeController := controller.NewTradeController(db, model.NewTradeRepository())
 
 	api := api.NewAPI(tradeController)
-	api.Listen()
+
+	log.Logger.Infof("HTTP server listening on port %s", config.Port)
+	if err := api.Listen(); err != nil {
+		log.Logger.Fatal(err)
+	}
 }

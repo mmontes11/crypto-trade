@@ -24,10 +24,10 @@ func main() {
 		log.Logger.Fatal(err)
 	}
 
-	log.Logger.Infof("Connected to ClickHouse")
+	log.Logger.Info("Connected to ClickHouse")
 	log.Logger.Info("Running migrations...")
 
-	err = ch.MigrateUp(db, "file://model/migrations")
+	err = ch.MigrateUp(db, config.MigrationsURL)
 	if err != nil {
 		log.Logger.Fatal(err)
 	}
