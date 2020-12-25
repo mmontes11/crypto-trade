@@ -48,6 +48,8 @@ const (
 		FROM trades t
 		WHERE t.size_currency = ?
 			AND t.price_currency = ?
+			AND t.time >= ?
+			AND t.time <= ?
 		ORDER BY (t.time, t.side)
 		LIMIT ?
 	`
@@ -59,6 +61,8 @@ const (
 		FROM trades t
 		WHERE t.size_currency = ?
 			AND t.price_currency = ?
+			AND t.time >= ?
+			AND t.time <= ?
 		GROUP BY time,
 			t.side
 		ORDER BY (time, t.side)
@@ -72,6 +76,8 @@ const (
 		FROM trades_hourly t
 		WHERE t.size_currency = ?
 			AND t.price_currency = ?
+			AND t.time >= ?
+			AND t.time <= ?
 		GROUP BY t.time,
 			t.side
 		ORDER BY (t.time, t.side)
@@ -93,6 +99,8 @@ func getQuery(params core.TradeParams) (query string, args []interface{}) {
 	args = []interface{}{
 		params.Crypto,
 		params.Currency,
+		params.FromDate,
+		params.ToDate,
 		params.Limit,
 	}
 	return

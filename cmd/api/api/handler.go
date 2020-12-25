@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/mmontes11/crypto-trade/cmd/api/controller"
 	"github.com/mmontes11/crypto-trade/cmd/api/log"
@@ -59,8 +60,16 @@ func getTradeParams(r *http.Request) (core.TradeParams, error) {
 	groupBy := q.Get("groupBy")
 	crypto := q.Get("crypto")
 	currency := q.Get("currency")
-	limit, err := parseIntParam(q.Get("limit"), 100)
 
+	fromDate, err := parseTimeParam(q.Get("fromDate"), time.Unix(0, 0))
+	if err != nil {
+		return core.TradeParams{}, err
+	}
+	toDate, err := parseTimeParam(q.Get("toDate"), time.Unix(1<<63-1, 0))
+	if err != nil {
+		return core.TradeParams{}, err
+	}
+	limit, err := parseIntParam(q.Get("limit"), 100)
 	if err != nil {
 		return core.TradeParams{}, err
 	}
@@ -69,6 +78,8 @@ func getTradeParams(r *http.Request) (core.TradeParams, error) {
 		GroupBy:  groupBy,
 		Crypto:   crypto,
 		Currency: currency,
+		FromDate: fromDate,
+		ToDate:   toDate,
 		Limit:    limit,
 	}
 
@@ -87,4 +98,15 @@ func parseIntParam(paramStr string, defaultValue int) (int, error) {
 		return 0, errors.New("Param cannot not be negative")
 	}
 	return param, nil
+}
+
+func parseTimeParam(dateStr string, defaultValue time.Time) (time.Time, error) {
+	if len(dateStr) == 0 {
+		return defaultValue, nil
+	}
+	t, err := time.Parse(time.RFC3339, dateStr)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return t, nil
 }

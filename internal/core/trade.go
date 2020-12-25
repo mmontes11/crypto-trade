@@ -24,6 +24,8 @@ type TradeParams struct {
 	GroupBy  string
 	Crypto   string
 	Currency string
+	FromDate time.Time
+	ToDate   time.Time
 	Limit    int
 }
 
@@ -45,6 +47,12 @@ func (tp *TradeParams) Validate() error {
 	}
 	if tp.Currency == "" {
 		return &ErrInvalidField{"currency"}
+	}
+	if tp.FromDate == (time.Time{}) {
+		return &ErrInvalidField{"fromDate"}
+	}
+	if tp.ToDate == (time.Time{}) {
+		return &ErrInvalidField{"toDate"}
 	}
 	if tp.Limit == 0 {
 		return &ErrInvalidField{"limit"}
