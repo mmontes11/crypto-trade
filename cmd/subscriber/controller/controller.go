@@ -59,7 +59,7 @@ func (tc *TradeController) Subscribe() {
 				sub.Unsubscribe()
 			}()
 
-			log.Logger.Debugf("[Worker %d] Subscribed to \"%s\"...", id, config.Subject)
+			log.Logger.Infof("[Worker %d] Subscribed to \"%s\"...", id, config.Subject)
 
 			for msg := range ch {
 				log.Logger.Debugf("[Worker %d] Received: %s", id, msg.Data)
