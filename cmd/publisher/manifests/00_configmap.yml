@@ -9,6 +9,6 @@ metadata:
 data:
   ENV: production
   NATS_URL: nats://nats:4222
-  PUBLISH_INTERVAL_MS: "500"
-  NUM_PUBLISHERS: "4"
+  PUBLISH_INTERVAL_MS: "10000"
+  NUM_PUBLISHERS: "2"
   SUBJECT: "trades"

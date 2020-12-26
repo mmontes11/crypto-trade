@@ -9,6 +9,6 @@ metadata:
 data:
   ENV: production
   NATS_URL: nats://nats:4222
-  NUM_SUBSCRIBERS: "4"
+  NUM_SUBSCRIBERS: "2"
   SUBJECT: "trades"
   CLICKHOUSE_URL: tcp://clickhouse:9000?username=crypto&password=crypto&database=default

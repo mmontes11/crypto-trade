@@ -182,7 +182,7 @@ clickhouse:
     # min_part_size_ratio – The ratio of the minimum size of a table part to the full size of the table.
     # method – Compression method. Acceptable values ​: lz4 or zstd(experimental).
     compression:
-      enabled: false
+      enabled: true
       cases:
       - min_part_size: "10000000000"
         min_part_size_ratio: "0.01"
