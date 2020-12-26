@@ -36,3 +36,6 @@ Thumbs.db
 
 # data
 data/
+
+# secret examples
+*secret.yml

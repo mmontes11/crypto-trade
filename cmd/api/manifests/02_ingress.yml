@@ -1,0 +1,32 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: crypto-trade-api
+  namespace: kube-system
+  labels:
+    app: crypto-trade-api
+    tier: reverse-proxy
+spec:
+  type: ExternalName
+  externalName: api.crypto-trade
+  ports:
+    - port: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: crypto-trade-api
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  labels:
+    app: crypto-trade-api
+    tier: reverse-proxy
+spec:
+  rules:
+    - host: crypto-trade.mmontes-dev.duckdns.org
+      http:
+        paths:
+          - backend:
+              serviceName: crypto-trade-api
+              servicePort: 80

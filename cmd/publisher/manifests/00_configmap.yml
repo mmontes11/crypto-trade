@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: publisher
+  namespace: crypto-trade
+  labels:
+    app: publisher
+    tier: back
+data:
+  ENV: production
+  NATS_URL: nats://nats:4222
+  PUBLISH_INTERVAL_MS: "10000"
+  NUM_PUBLISHERS: "2"
+  SUBJECT: "trades"
