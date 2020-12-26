@@ -10,6 +10,8 @@ import (
 
 	// Filesystem migration source driver: https://github.com/golang-migrate/migrate#migration-sources
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	// GitHub migration source driver: https://github.com/golang-migrate/migrate#migration-sources
+	_ "github.com/golang-migrate/migrate/v4/source/github"
 )
 
 const clickhouse = "clickhouse"
@@ -23,27 +25,24 @@ func Connect(URL string) (*sql.DB, error) {
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
-
 	return db, nil
 }
 
 // MigrateUp runs migrations
-func MigrateUp(db *sql.DB, migrationsDir string) error {
-	m, err := getMigrate(db, migrationsDir)
+func MigrateUp(db *sql.DB, migrationsURL string) error {
+	m, err := getMigrate(db, migrationsURL)
 	if err != nil {
 		return err
 	}
-
 	return runMigration(m.Up)
 }
 
 // MigrateDown rollbacks migrations
-func MigrateDown(db *sql.DB, migrationsDir string) error {
-	m, err := getMigrate(db, migrationsDir)
+func MigrateDown(db *sql.DB, migrationsURL string) error {
+	m, err := getMigrate(db, migrationsURL)
 	if err != nil {
 		return err
 	}
-
 	return runMigration(m.Down)
 }
 
@@ -55,11 +54,10 @@ func runMigration(migration func() error) error {
 	return nil
 }
 
-func getMigrate(db *sql.DB, migrationsDir string) (*migrate.Migrate, error) {
+func getMigrate(db *sql.DB, migrationsURL string) (*migrate.Migrate, error) {
 	driver, err := migrateCH.WithInstance(db, &migrateCH.Config{})
 	if err != nil {
 		return nil, err
 	}
-
-	return migrate.NewWithDatabaseInstance(migrationsDir, clickhouse, driver)
+	return migrate.NewWithDatabaseInstance(migrationsURL, clickhouse, driver)
 }
