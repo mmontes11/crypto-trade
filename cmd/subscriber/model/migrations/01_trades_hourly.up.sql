@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS trades_hourly (
 	size_currency String,
 	avg_price_state AggregateFunction(avg, Float32),
 	price_currency String
-) ENGINE = SummingMergeTree() PARTITION BY (toYYYYMMDD(time))
+) ENGINE = SummingMergeTree() PARTITION BY (toYear(time))
 ORDER BY (time, side, size_currency, price_currency);
