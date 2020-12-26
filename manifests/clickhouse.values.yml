@@ -1,5 +1,5 @@
 ## Timezone
-timezone: "Europe/Madrid"
+timezone: "UTC"
 
 ## Cluster domain
 clusterDomain: "cluster.local"
@@ -13,15 +13,15 @@ clusterDomain: "cluster.local"
 # tolerations: []
 ## Clickhouse pod/node affinity/anti-affinity
 ## 
-#affinity:
-#  nodeAffinity:
-#    requiredDuringSchedulingIgnoredDuringExecution:
-#      nodeSelectorTerms:
-#      - matchExpressions:
-#        - key: "application/clickhouse"
-#          operator: In
-#          values:
-#          - "true"
+affinity:
+ nodeAffinity:
+   requiredDuringSchedulingIgnoredDuringExecution:
+     nodeSelectorTerms:
+     - matchExpressions:
+       - key: "beta.kubernetes.io/arch"
+         operator: In
+         values:
+         - "arm64"
 
 clickhouse:
   ## StatefulSet controller supports relax its ordering guarantees while preserving its uniqueness and identity guarantees. There are two valid pod management policies: OrderedReady and Parallel
@@ -54,10 +54,10 @@ clickhouse:
   interserver_http_port: "9009"
   ## 
   ## The instance number of Clickhouse
-  replicas: "2"
+  replicas: "1"
   ## Clickhouse image configuration.
-  image: "yandex/clickhouse-server"
-  imageVersion: "19.14"
+  image: "lunalabsltd/clickhouse-server"
+  imageVersion: "20.6.7.4-arm"
   imagePullPolicy: "IfNotPresent"
   #imagePullSecrets: 
   ## Periodic probe of container liveness. Container will be restarted if the probe fails. Cannot be updated. 
@@ -86,7 +86,7 @@ clickhouse:
     enabled: false
     ## Clickhouse data volume
     dataPersistentVolume: 
-      enabled: true
+      enabled: false
       accessModes: 
       - "ReadWriteOnce"
       storageClassName: "-"
