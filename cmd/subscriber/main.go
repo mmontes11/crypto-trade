@@ -1,6 +1,8 @@
 package main
 
 import (
+	ctx "context"
+
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/config"
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/controller"
 	"github.com/mmontes11/crypto-trade/cmd/subscriber/log"
@@ -19,7 +21,7 @@ func main() {
 
 	log.Logger.Info("Connected to NATS")
 
-	db, err := ch.Connect(config.ClickHouseURL)
+	db, err := ch.Connect(ctx.Background(), config.ClickHouseURL)
 	if err != nil {
 		log.Logger.Fatal(err)
 	}

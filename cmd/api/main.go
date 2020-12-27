@@ -1,6 +1,8 @@
 package main
 
 import (
+	ctx "context"
+
 	"github.com/mmontes11/crypto-trade/cmd/api/api"
 	"github.com/mmontes11/crypto-trade/cmd/api/config"
 	"github.com/mmontes11/crypto-trade/cmd/api/controller"
@@ -13,7 +15,7 @@ import (
 func main() {
 	log.Init()
 
-	db, err := ch.Connect(config.ClickHouseURL)
+	db, err := ch.Connect(ctx.Background(), config.ClickHouseURL)
 	if err != nil {
 		log.Logger.Fatal(err)
 	}

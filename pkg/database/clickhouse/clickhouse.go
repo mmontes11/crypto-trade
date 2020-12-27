@@ -1,7 +1,9 @@
 package clickhouse
 
 import (
+	"context"
 	"database/sql"
+	"time"
 
 	// Clickhouse database driver: https://github.com/golang-migrate/migrate#databases
 	_ "github.com/ClickHouse/clickhouse-go"
@@ -17,7 +19,7 @@ import (
 const clickhouse = "clickhouse"
 
 // Connect establishes connection
-func Connect(URL string) (*sql.DB, error) {
+func Connect(ctx context.Context, URL string) (*sql.DB, error) {
 	db, err := sql.Open(clickhouse, URL)
 	if err != nil {
 		return nil, err
@@ -25,6 +27,20 @@ func Connect(URL string) (*sql.DB, error) {
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
+
+	// Keep connection alive
+	tick := time.Tick(10 * time.Second)
+	go func(ctx context.Context, db *sql.DB) {
+		for {
+			select {
+			case <-tick:
+				db.Ping()
+			case <-ctx.Done():
+				return
+			}
+		}
+	}(ctx, db)
+
 	return db, nil
 }
 
