@@ -12,7 +12,7 @@ type TxFn = func(ctx ctx.Context, tx *sql.Tx) error
 func Tx(ctx ctx.Context, db *sql.DB, txFn TxFn) error {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	if err := txFn(ctx, tx); err != nil {
