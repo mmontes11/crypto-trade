@@ -96,4 +96,4 @@ Body:
 
 ## Production environment
 
-[https://crypto-trade.mmontes-dev.duckdns.org/api/trades?groupBy=hour&crypto=btc&currency=eur](https://crypto-trade.mmontes-dev.duckdns.org/api/trades?groupBy=hour&crypto=btc&currency=eur)
+[https://crypto-trade.mmontes-dev.duckdns.org/api/trades?groupBy=hour&crypto=btc&currency=eur&fromDate=2021-01-01T00:00:00Z](https://crypto-trade.mmontes-dev.duckdns.org/api/trades?groupBy=hour&crypto=btc&currency=eur&fromDate=2021-01-01T00:00:00Z)
