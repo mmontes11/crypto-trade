@@ -39,3 +39,6 @@ data/
 
 # secret examples
 *secret.yml
+
+# Chart dependencies
+charts/**/charts/*.tgz
