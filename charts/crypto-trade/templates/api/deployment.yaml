@@ -1,0 +1,53 @@
+{{- with $.Values.api }}
+{{ $fullName := include "crypto-trade.fullname" $ }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName  }}-api
+  labels:
+    {{- include "crypto-trade.labels" $ | nindent 4 }}
+spec:
+  {{ if not .autoscaling.enabled }}
+  replicas: {{ .replicaCount }}
+  {{ end }}
+  selector:
+    matchLabels:
+      {{- include "crypto-trade.selectorLabels" $ | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "crypto-trade.selectorLabels" $ | nindent 8  }}
+    spec:
+      containers:
+        - name: {{ $fullName }}
+          image: "{{ .image.repository }}:{{ .image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .service.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          {{ with .resources }}
+          resources:
+            {{ toYaml . | nindent 12 }}
+          {{ end }}
+          envFrom:
+            - configMapRef:
+                name: {{ $fullName }}-api
+          env:
+            - name: CLICKHOUSE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "crypto-trade.secret" $ }}
+                  key: CLICKHOUSE_URL
+      {{ with .nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 }}
+      {{ end}}
+{{ end }}

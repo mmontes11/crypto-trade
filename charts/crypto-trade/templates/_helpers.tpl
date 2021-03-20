@@ -24,6 +24,13 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{/*
+Secret
+*/}}
+{{- define "crypto-trade.secret" -}}
+{{- default .Chart.Name .Values.secretNameOverride  | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "crypto-trade.chart" -}}
