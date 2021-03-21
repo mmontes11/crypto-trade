@@ -7,7 +7,7 @@ metadata:
     {{ include "crypto-trade.labels" $ | nindent 4 }}
 data:
   ENV: {{ .env }}
-  PUBLISH_INTERVAL_MS: {{ .publishIntervalMs }}
-  NUM_PUBLISHERS: {{ .numPublishers }}
+  PUBLISH_INTERVAL_MS: {{ .publishIntervalMs | quote }}
+  NUM_PUBLISHERS: {{ .numPublishers | quote }}
   SUBJECT: {{ .subject }}
 {{ end }}
