@@ -27,7 +27,7 @@ api:
   replicaCount: 1
 
   autoscaling:
-    enabled: false
+    enabled: true
     minReplicas: 1
     maxReplicas: 4
     targetCPUUtilizationPercentage: 50
@@ -48,6 +48,19 @@ publisher:
   publishIntervalMs: 10000
 
   numPublishers: 2
+
+  resources: {}
+
+  replicaCount: 1
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 50
+
+  nodeSelector: {}
 
 subscriber:
   image:

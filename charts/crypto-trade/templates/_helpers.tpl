@@ -64,3 +64,19 @@ Selector labels API
 app.kubernetes.io/name: {{ include "crypto-trade.fullnameApi" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Full name Publisher
+*/}}
+{{- define "crypto-trade.fullnamePublisher" -}}
+{{- printf "%s-%s" (include "crypto-trade.fullname" .) "publisher" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+
+{{/*
+Selector labels Publisher
+*/}}
+{{- define "crypto-trade.selectorLabelsPublisher" -}}
+app.kubernetes.io/name: {{ include "crypto-trade.fullnamePublisher" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

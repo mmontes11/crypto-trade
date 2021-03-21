@@ -1,6 +1,6 @@
-{{ with $.Values.api }}
+{{ with $.Values.publisher }}
 {{ if .autoscaling.enabled }}
-{{ $fullName := include "crypto-trade.fullnameApi" $ }}
+{{ $fullName := include "crypto-trade.fullnamePublisher" $ }}
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
