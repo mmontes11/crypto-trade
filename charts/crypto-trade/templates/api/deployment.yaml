@@ -1,22 +1,22 @@
-{{- with $.Values.api }}
-{{ $fullName := include "crypto-trade.fullname" $ }}
+{{ with $.Values.api }}
+{{ $fullName := include "crypto-trade.fullnameApi" $ }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $fullName  }}-api
+  name: {{ $fullName  }}
   labels:
-    {{- include "crypto-trade.labels" $ | nindent 4 }}
+    {{ include "crypto-trade.labels" $ | nindent 4 }}
 spec:
   {{ if not .autoscaling.enabled }}
   replicas: {{ .replicaCount }}
   {{ end }}
   selector:
     matchLabels:
-      {{- include "crypto-trade.selectorLabels" $ | nindent 6 }}
+      {{ include "crypto-trade.selectorLabelsApi" $ | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "crypto-trade.selectorLabels" $ | nindent 8  }}
+        {{ include "crypto-trade.selectorLabelsApi" $ | nindent 8  }}
     spec:
       containers:
         - name: {{ $fullName }}
@@ -39,7 +39,7 @@ spec:
           {{ end }}
           envFrom:
             - configMapRef:
-                name: {{ $fullName }}-api
+                name: {{ $fullName }}
           env:
             - name: CLICKHOUSE_URL
               valueFrom:

@@ -42,7 +42,8 @@ Common labels
 */}}
 {{- define "crypto-trade.labels" -}}
 helm.sh/chart: {{ include "crypto-trade.chart" . }}
-{{ include "crypto-trade.selectorLabels" . }}
+app.kubernetes.io/name: {{ include "crypto-trade.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -50,9 +51,16 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Selector labels
+Full name API
 */}}
-{{- define "crypto-trade.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "crypto-trade.name" . }}
+{{- define "crypto-trade.fullnameApi" -}}
+{{- printf "%s-%s" (include "crypto-trade.fullname" .) "api" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Selector labels API
+*/}}
+{{- define "crypto-trade.selectorLabelsApi" -}}
+app.kubernetes.io/name: {{ include "crypto-trade.fullnameApi" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

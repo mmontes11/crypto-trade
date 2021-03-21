@@ -1,12 +1,12 @@
 {{ with $.Values.api }}
 {{ if .ingressRoute.enabled }}
-{{ $fullName := include "crypto-trade.fullname" $ }}
+{{ $fullName := include "crypto-trade.fullnameApi" $ }}
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: {{ $fullName }}
   labels:
-    {{- include "crypto-trade.labels" $ | nindent 4 }}
+    {{ include "crypto-trade.labels" $ | nindent 4 }}
 spec:
   entryPoints:
     {{ range $entrypoint := .ingressRoute.entryPoints }}
@@ -17,7 +17,7 @@ spec:
       match: Host(`{{ .ingressRoute.host }}`)
       services:
         - kind: Service
-          name: {{ $fullName }}-api
+          name: {{ $fullName }}
           port: {{ .service.port }}
 {{ end }}
 {{ end }}

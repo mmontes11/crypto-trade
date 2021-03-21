@@ -1,10 +1,10 @@
-{{- with $.Values.api }}
+{{ with $.Values.api }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "crypto-trade.fullname" $ }}-api
+  name: {{ include "crypto-trade.fullnameApi" $ }}
   labels:
-    {{- include "crypto-trade.labels" $ | nindent 4 }}
+    {{ include "crypto-trade.labels" $ | nindent 4 }}
 data:
   ENV: {{ .env }}
 {{ end }}
