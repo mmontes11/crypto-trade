@@ -13,6 +13,16 @@ api:
   service:
     type: ClusterIP
     port: 80
+  
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 3
+    periodSeconds: 15
+    
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 3
+    periodSeconds: 15
 
   ingressRoute:
     enabled: true

@@ -1,4 +1,4 @@
-{{ with $.Values.publisher }}
+{{ with $.Values.subscriber }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,6 +7,6 @@ metadata:
     {{ include "crypto-trade.labels" $ | nindent 4 }}
 data:
   ENV: {{ .env }}
-  NUM_SUBSCRIBERS: {{ .publishIntervalMs | quote }}
+  NUM_SUBSCRIBERS: {{ .numSubscribers | quote }}
   SUBJECT: {{ .subject }}
 {{ end }}
