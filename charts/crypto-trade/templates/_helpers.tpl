@@ -72,11 +72,25 @@ Full name Publisher
 {{- printf "%s-%s" (include "crypto-trade.fullname" .) "publisher" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-
 {{/*
 Selector labels Publisher
 */}}
 {{- define "crypto-trade.selectorLabelsPublisher" -}}
 app.kubernetes.io/name: {{ include "crypto-trade.fullnamePublisher" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Full name Subscriber
+*/}}
+{{- define "crypto-trade.fullnameSubscriber" -}}
+{{- printf "%s-%s" (include "crypto-trade.fullname" .) "subscriber" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Selector labels Subscriber
+*/}}
+{{- define "crypto-trade.selectorLabelsSubscriber" -}}
+app.kubernetes.io/name: {{ include "crypto-trade.fullnameSubscriber" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

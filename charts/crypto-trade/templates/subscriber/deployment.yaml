@@ -1,6 +1,7 @@
-{{ with $.Values.publisher }}
-{{ $fullName := include "crypto-trade.fullnamePublisher" $ }}
-{{ $selectorLabels := include "crypto-trade.selectorLabelsPublisher" $ }}
+{{ with $.Values.subscriber }}
+{{ $fullName := include "crypto-trade.fullnameSubscriber" $ }}
+{{ $selectorLabels := include "crypto-trade.selectorLabelsSubscriber" $ }}
+{{ $secret := include "crypto-trade.secret" $ }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -34,8 +35,18 @@ spec:
             - name: NATS_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "crypto-trade.secret" $ }}
+                  name: {{ $secret }}
                   key: NATS_URL
+            - name: CLICKHOUSE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secret }}
+                  key: CLICKHOUSE_URL
+            - name: MIGRATIONS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secret }}
+                  key: MIGRATIONS_URL
       {{ with .nodeSelector }}
       nodeSelector:
         {{ toYaml . | nindent 8 }}
