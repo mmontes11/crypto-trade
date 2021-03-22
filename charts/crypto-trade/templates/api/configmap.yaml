@@ -7,4 +7,5 @@ metadata:
     {{ include "crypto-trade.labels" $ | nindent 4 }}
 data:
   ENV: {{ .env }}
+  PORT: {{ .service.port | quote }}
 {{ end }}
