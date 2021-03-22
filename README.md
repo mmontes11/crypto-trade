@@ -58,10 +58,10 @@ $ ./scripts/run-dev.sh
 ```bash
 $ ./scripts/run-docker.sh
 ```
-###### Kubernetes
+###### Kubernetes + Helm
 
 ```bash
-$ ./scripts/deploy.sh
+$ helm install crypto-trade charts/crypto-trade
 ```
 ## API
 
