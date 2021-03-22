@@ -1,0 +1,11 @@
+{{ with $.Values.api }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "crypto-trade.fullnameApi" $ }}
+  labels:
+    {{ include "crypto-trade.labels" $ | nindent 4 }}
+data:
+  ENV: {{ .env }}
+  PORT: {{ .service.port | quote }}
+{{ end }}

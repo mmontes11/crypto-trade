@@ -19,7 +19,3 @@ services:
         hard: 262144
     volumes:
       - ./data/clickhouse:/var/lib/clickhouse
-    environment:
-      CLICKHOUSE_DB: crypto
-      CLICKHOUSE_USER: crypto
-      CLICKHOUSE_PASSWORD: crypto

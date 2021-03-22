@@ -15,7 +15,7 @@ var (
 	// Subject is the subject for subscribing to trades
 	Subject = config.GetEnv("SUBJECT", "trades")
 	// ClickHouseURL it the URL of the ClickHouse instance
-	ClickHouseURL = config.GetEnv("CLICKHOUSE_URL", "tcp://127.0.0.1:9000?username=crypto&password=crypto&database=crypto")
+	ClickHouseURL = config.GetEnv("CLICKHOUSE_URL", "tcp://127.0.0.1:9000")
 	// MigrationsURL is the URL of data migrations
 	MigrationsURL = config.GetEnv("MIGRATIONS_URL", "file://model/migrations")
 )

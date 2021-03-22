@@ -1,0 +1,14 @@
+{{ with $.Values.api }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "crypto-trade.fullnameApi" $ }}
+  labels: 
+    {{ include "crypto-trade.labels" $ | nindent 4 }}
+spec:
+  type: {{ .service.type }}
+  ports:
+    - port: {{ .service.port }}
+  selector: 
+    {{ include "crypto-trade.selectorLabelsApi" $ | nindent 4 }}
+{{ end }}

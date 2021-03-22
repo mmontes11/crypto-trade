@@ -8,7 +8,7 @@ services:
     environment: 
       - API_SERVICE_PORT=10000
       - ENV=production
-      - CLICKHOUSE_URL=tcp://clickhouse:9000?username=crypto&password=crypto&database=crypto
+      - CLICKHOUSE_URL=tcp://clickhouse:9000
     ports:
       - "10000:10000"
   publisher:
@@ -31,7 +31,7 @@ services:
       - NATS_URL=nats://nats:4222
       - NUM_SUBSCRIBERS=4
       - SUBJECT=trades
-      - CLICKHOUSE_URL=tcp://clickhouse:9000?username=crypto&password=crypto&database=crypto
+      - CLICKHOUSE_URL=tcp://clickhouse:9000
       - MIGRATIONS_URL=file:///data/migrations
     volumes:
       - ./cmd/subscriber/model/migrations:/data/migrations
