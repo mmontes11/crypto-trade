@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: crypto-trade
+stringData:
+  CLICKHOUSE_URL: tcp://crypto-trade-clickhouse:9000
+  NATS_URL: nats://crypto-trade-nats:4222
+  PERSONAL_ACCESS_TOKEN: token
