@@ -62,7 +62,8 @@ $ ./scripts/run-docker.sh
 ###### Kubernetes + Helm
 
 ```bash
-$ helm install crypto-trade charts/crypto-trade
+$ helm repo add mmontes https://charts.mmontes-dev.duckdns.org
+$ helm install crypto-trade mmontes/crypto-trade
 ```
 ## API
 
