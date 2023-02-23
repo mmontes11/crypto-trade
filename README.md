@@ -61,12 +61,6 @@ $ ./scripts/run-dev.sh
 ```bash
 $ ./scripts/run-docker.sh
 ```
-###### Kubernetes + Helm
-
-```bash
-$ helm repo add mmontes https://charts.mmontes-dev.duckdns.org
-$ helm install crypto-trade mmontes/crypto-trade
-```
 ## API
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/155f5c6f3ba941caed61#?env%5Bcrypto-trade%20PRO%5D=W3sia2V5IjoidXJsIiwidmFsdWUiOiJodHRwczovL2NyeXB0by10cmFkZS5tbW9udGVzLWRldi5kdWNrZG5zLm9yZyIsImVuYWJsZWQiOnRydWV9XQ==)
